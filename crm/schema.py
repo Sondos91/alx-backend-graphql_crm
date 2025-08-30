@@ -490,9 +490,64 @@ class Query(graphene.ObjectType):
         return queryset
 
 
+# Response Types for Stock Updates
+class UpdateLowStockProductsResponse(graphene.ObjectType):
+    updated_products = graphene.List(ProductType)
+    message = graphene.String()
+    success = graphene.Boolean()
+    updated_count = graphene.Int()
+
+
 # Mutations
+class UpdateLowStockProducts(graphene.Mutation):
+    """
+    Mutation to update low-stock products (stock < 10) by incrementing their stock by 10.
+    This simulates restocking operations.
+    """
+    
+    Output = UpdateLowStockProductsResponse
+
+    def mutate(self, info):
+        try:
+            # Find products with stock < 10
+            low_stock_products = Product.objects.filter(stock__lt=10)
+            
+            if not low_stock_products.exists():
+                return UpdateLowStockProductsResponse(
+                    updated_products=[],
+                    message="No low-stock products found to update",
+                    success=True,
+                    updated_count=0
+                )
+            
+            # Update stock levels in a transaction
+            updated_products = []
+            with transaction.atomic():
+                for product in low_stock_products:
+                    old_stock = product.stock
+                    product.stock += 10
+                    product.save()
+                    updated_products.append(product)
+            
+            return UpdateLowStockProductsResponse(
+                updated_products=updated_products,
+                message=f"Successfully updated {len(updated_products)} low-stock products",
+                success=True,
+                updated_count=len(updated_products)
+            )
+            
+        except Exception as e:
+            return UpdateLowStockProductsResponse(
+                updated_products=[],
+                message=f"Error updating low-stock products: {str(e)}",
+                success=False,
+                updated_count=0
+            )
+
+
 class Mutation(graphene.ObjectType):
     create_customer = CreateCustomer.Field()
     bulk_create_customers = BulkCreateCustomers.Field()
     create_product = CreateProduct.Field()
     create_order = CreateOrder.Field()
+    update_low_stock_products = UpdateLowStockProducts.Field()

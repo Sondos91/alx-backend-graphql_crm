@@ -40,12 +40,26 @@ The system also includes a django-crontab based heartbeat logger that runs every
   - Customer count verification
   - Comprehensive error handling
 
+### Stock Update Logger
+The system includes a django-crontab based stock update job that runs every 12 hours:
+
+- **Function**: `crm.cron.update_low_stock`
+- **Schedule**: Every 12 hours (`0 */12 * * *`)
+- **Logging**: `/tmp/low_stock_updates_log.txt`
+- **Features**: 
+  - Automatically finds products with stock < 10
+  - Increments stock by 10 (simulating restocking)
+  - GraphQL mutation integration
+  - Comprehensive logging of all updates
+  - Transaction safety for data consistency
+
 ### Django-Crontab Configuration
-The heartbeat logger is configured in `alx_backend_graphql/settings.py`:
+The cron jobs are configured in `alx_backend_graphql/settings/base.py`:
 
 ```python
 CRONJOBS = [
     ('*/5 * * * *', 'crm.cron.log_crm_heartbeat'),
+    ('0 */12 * * *', 'crm.cron.update_low_stock'),
 ]
 ```
 
@@ -156,6 +170,9 @@ Sat Aug 30 13:01:53 EEST 2025: Customer cleanup script finished
 
 ### Heartbeat Logger
 - **`*/5 * * * *`** - Every 5 minutes
+
+### Stock Updates
+- **`0 */12 * * *`** - Every 12 hours
 
 ## Monitoring
 
