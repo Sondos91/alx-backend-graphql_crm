@@ -1,2 +1,3 @@
 # Settings package initialization
-from .base import *
+# Default to development settings
+from .development import *

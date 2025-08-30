@@ -1,1 +1,6 @@
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"POST /graphql HTTP/1.1" 200 55875
+"POST /graphql HTTP/1.1" 200 140
+"POST /graphql HTTP/1.1" 200 55875
+"POST /graphql HTTP/1.1" 200 310
