@@ -8,6 +8,7 @@ from django.db.models import Q
 from .models import Customer, Product, Order, OrderItem
 from .filters import CustomerFilter, ProductFilter, OrderFilter
 from decimal import Decimal
+from crm.models import Product
 
 
 # GraphQL Types
