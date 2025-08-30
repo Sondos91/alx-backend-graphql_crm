@@ -4,6 +4,7 @@ Celery tasks for ALX Backend GraphQL CRM
 
 import os
 import django
+import requests
 from datetime import datetime
 from celery import shared_task
 from gql import gql, Client
